@@ -3,56 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PNG Rugby Live</title>
+<title>VIP Sports Live Hub</title>
 
 <style>
 body {
-    background-color: #121212;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
+    background:#0f0f0f;
+    color:#fff;
+    font-family:Arial;
+    margin:0;
 }
 
 header {
-    background-color: #1f1f1f;
-    padding: 20px;
-    border-bottom: 3px solid #ffcc00;
+    background:#1a1a1a;
+    padding:15px;
+    text-align:center;
+    border-bottom:2px solid gold;
+}
+
+.sports-bar {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:8px;
+    padding:10px;
+}
+
+.sport-btn {
+    padding:8px 12px;
+    border:1px solid gold;
+    background:#222;
+    color:#fff;
+    cursor:pointer;
+    border-radius:5px;
+}
+
+.sport-btn.active {
+    background:gold;
+    color:#000;
 }
 
 .container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 10px;
+    max-width:900px;
+    margin:auto;
+    padding:10px;
 }
 
 .match-card {
-    background-color: #1f1f1f;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-left: 5px solid #28a745;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    text-align: left;
+    background:#1c1c1c;
+    margin:10px 0;
+    padding:12px;
+    border-left:4px solid #28a745;
+    border-radius:6px;
 }
 
 .btn {
-    background-color: #ffcc00;
-    color: #121212;
-    padding: 10px 15px;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 5px;
-    display: inline-block;
-}
-
-#no-matches {
-    color: #888;
-    margin-top: 50px;
+    background:gold;
+    color:#000;
+    padding:6px 10px;
+    text-decoration:none;
+    border-radius:5px;
+    display:inline-block;
+    margin-top:8px;
 }
 </style>
 </head>
@@ -60,77 +71,71 @@ header {
 <body>
 
 <header>
-    <h1>🏆 PNG RUGBY LIVE</h1>
-    <p>Free Automated Live Rugby Match Directory</p>
+    <h2>🏟️ VIP Sports Live Hub</h2>
 </header>
 
-<main class="container">
-    <h2>🔴 Today's Live & Upcoming Rugby Matches</h2>
-    <div id="match-list">Loading today's schedule...</div>
-</main>
+<div class="sports-bar">
+    <button class="sport-btn active" onclick="loadSport('Soccer', this)">Football</button>
+    <button class="sport-btn" onclick="loadSport('Basketball', this)">Basketball</button>
+    <button class="sport-btn" onclick="loadSport('Rugby%20League', this)">Rugby League</button>
+    <button class="sport-btn" onclick="loadSport('Rugby%20Union', this)">Rugby Union</button>
+    <button class="sport-btn" onclick="loadSport('American%20Football', this)">NFL</button>
+    <button class="sport-btn" onclick="loadSport('Cricket', this)">Cricket</button>
+</div>
+
+<div class="container">
+    <div id="match-list">Loading matches...</div>
+</div>
 
 <script>
-async function fetchMatches() {
-    const listContainer = document.getElementById('match-list');
+
+async function loadSport(sport, btn) {
+    document.querySelectorAll('.sport-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const list = document.getElementById('match-list');
+    list.innerHTML = "Loading...";
+
+    const today = new Date().toISOString().split('T')[0];
+
+    const url = `https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${today}&s=${sport}`;
 
     try {
-        const today = new Date().toISOString().split('T')[0];
-
-        const url = `https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${today}&s=Rugby%20League`;
-
-        const response = await fetch(url);
-        const data = await response.json();
+        const res = await fetch(url);
+        const data = await res.json();
 
         if (!data.events) {
-            listContainer.innerHTML = '<p id="no-matches">No rugby matches scheduled for today.</p>';
+            list.innerHTML = "No matches today.";
             return;
         }
 
-        listContainer.innerHTML = '';
+        list.innerHTML = "";
 
-        data.events.forEach(event => {
-            const matchCard = document.createElement('div');
-            matchCard.className = 'match-card';
+        data.events.forEach(e => {
+            const div = document.createElement("div");
+            div.className = "match-card";
 
-            const match = encodeURIComponent(event.strEvent);
+            const match = encodeURIComponent(e.strEvent);
 
-            matchCard.innerHTML = `
-                <div>
-                    <strong>⏰ ${event.strTime || 'TBA'}</strong>
-                    <h3>${event.strEvent}</h3>
-                    <p>${event.strLeague}</p>
-                </div>
-
-                <div>
-                    <a class="btn" href="player.html?match=${match}">
-                        💻 Watch Feed
-                    </a>
-                </div>
+            div.innerHTML = `
+                <h3>${e.strEvent}</h3>
+                <p>${e.strTime || "TBA"} - ${e.strLeague}</p>
+                <a class="btn" href="player.html?match=${match}">
+                    Watch Match
+                </a>
             `;
 
-            listContainer.appendChild(matchCard);
+            list.appendChild(div);
         });
 
-    } catch (error) {
-        console.log(error);
-
-        listContainer.innerHTML = `
-            <div class="match-card">
-                <div>
-                    <strong>🔴 LIVE</strong>
-                    <h3>Rugby Feed Unavailable</h3>
-                    <p>Try refreshing page</p>
-                </div>
-                <div>
-                    <a class="btn" href="player.html?match=NRL">💻 Open Player</a>
-                </div>
-            </div>
-        `;
+    } catch (err) {
+        list.innerHTML = "Error loading data.";
     }
 }
 
-fetchMatches();
-setInterval(fetchMatches, 60000);
+// default load
+loadSport('Soccer', document.querySelector('.sport-btn'));
+
 </script>
 
 </body>
