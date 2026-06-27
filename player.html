@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Live Rugby Stream Player</title>
+    <style>
+        body { background-color: #000; margin: 0; padding: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; color: #fff; font-family: Arial; }
+        .video-box { width: 95%; max-width: 960px; aspect-ratio: 16/9; background-color: #111; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .ad-banner { background: #111; color: #ffcc00; width: 95%; max-width: 960px; text-align: center; padding: 10px 0; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2 id="match-title">Loading Stream...</h2>
+    <div class="video-box">
+        <!-- This script embeds public indexing links based on the active match name -->
+        <iframe id="stream-frame" src="" allowfullscreen scrolling="no"></iframe>
+    </div>
+    <div class="ad-banner">⚠️ Close ads inside the player window to view the game</div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchName = urlParams.get('match');
+        if(matchName) {
+            document.getElementById('match-title').innerText = matchName;
+            // Configures automatic layout pulling from public open-indexing endpoints
+            document.getElementById('stream-frame').src = "https://vidsrc.me" + encodeURIComponent(matchName);
+        }
+    </script>
+</body>
+</html>
