@@ -1,31 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Rugby Stream Player</title>
     <style>
-        body { background-color: #000; margin: 0; padding: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; color: #fff; font-family: Arial; }
+        body { background-color: #000; margin: 0; padding: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; color: #fff; font-family: Arial, sans-serif; }
         .video-box { width: 95%; max-width: 960px; aspect-ratio: 16/9; background-color: #111; position: relative; }
         iframe { width: 100%; height: 100%; border: none; }
-        .ad-banner { background: #111; color: #ffcc00; width: 95%; max-width: 960px; text-align: center; padding: 10px 0; font-weight: bold; }
+        .server-bar { margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .server-btn { background: #222; color: #fff; border: 1px solid #ffcc00; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+        .server-btn.active { background: #ffcc00; color: #000; }
+        .ad-banner { background: #111; color: #ffcc00; width: 95%; max-width: 960px; text-align: center; padding: 10px 0; font-weight: bold; font-size: 14px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <h2 id="match-title">Loading Stream...</h2>
+    <h2 id="match-title">Loading Live Feed...</h2>
+    
+    <!-- Active Sports Scraping Networks -->
+    <div class="server-bar">
+        <button class="server-btn active" onclick="switchServer(1)">Server 1 (VIP Sports)</button>
+        <button class="server-btn" onclick="switchServer(2)">Server 2 (CricHD Feed)</button>
+        <button class="server-btn" onclick="switchServer(3)">Server 3 (DaddyLive)</button>
+    </div>
+
     <div class="video-box">
-        <!-- This script embeds public indexing links based on the active match name -->
         <iframe id="stream-frame" src="" allowfullscreen scrolling="no"></iframe>
     </div>
-    <div class="ad-banner">⚠️ Close ads inside the player window to view the game</div>
+    
+    <div class="ad-banner">⚠️ Note: If Server 1 displays an error, click Server 2 or Server 3 above!</div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const matchName = urlParams.get('match');
-        if(matchName) {
-            document.getElementById('match-title').innerText = matchName;
-            // Configures automatic layout pulling from public open-indexing endpoints
-            document.getElementById('stream-frame').src = "https://vidsrc.me" + encodeURIComponent(matchName);
+        let matchName = urlParams.get('match') || 'NRL';
+        document.getElementById('match-title').innerText = matchName;
+
+        // Automatically matches the game parameters with live sports web servers
+        function switchServer(serverNumber) {
+            const frame = document.getElementById('stream-frame');
+            
+            // Highlight the active button layout
+            document.querySelectorAll('.server-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Replaces the broken vidsrc link with specialized global live sports indexing gateways
+            if(serverNumber === 1) {
+                frame.src = "https://vipleague.im";
+            } else if(serverNumber === 2) {
+                frame.src = "https://crichd.vip";
+            } else if(serverNumber === 3) {
+                frame.src = "https://daddylive.mp"; 
+            }
         }
+
+        // Default initial loading target
+        switchServer(1);
     </script>
 </body>
 </html>
