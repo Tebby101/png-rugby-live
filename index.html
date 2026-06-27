@@ -31,7 +31,8 @@
             const listContainer = document.getElementById('match-list');
             try {
                 // Free, open sports API endpoint for current rugby matches
-                const response = await fetch('https://thesportsdb.com');
+                const response = await fetch('https://corsproxy.io');
+
                 const data = await response.json();
 
                 if (!data.events || data.events.length === 0) {
