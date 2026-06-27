@@ -1,3 +1,4 @@
+<script>
 async function fetchMatches() {
     const listContainer = document.getElementById('match-list');
 
@@ -38,6 +39,10 @@ async function fetchMatches() {
 
     } catch (error) {
         console.error(error);
-        listContainer.innerHTML = '<p id="no-matches">Failed to load matches.</p>';
+        listContainer.innerHTML = '<p id="no-matches">Failed to load matches. Try again later.</p>';
     }
 }
+
+fetchMatches();
+setInterval(fetchMatches, 60000);
+</script>
