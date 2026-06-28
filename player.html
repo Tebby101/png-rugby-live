@@ -1,4 +1,102 @@
-<iframe id="player"
-    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-    allowfullscreen>
-</iframe>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player</title>
+
+<style>
+body {
+    margin:0;
+    background:#0d0d0d;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+header {
+    padding:10px;
+    background:#1a1a1a;
+    border-bottom:2px solid gold;
+}
+
+.video {
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    aspect-ratio:16/9;
+    border:2px solid gold;
+}
+
+iframe {
+    width:100%;
+    height:100%;
+    border:none;
+}
+
+.btns {
+    margin:10px;
+}
+
+button {
+    padding:8px 10px;
+    margin:3px;
+    border:none;
+    border-radius:5px;
+    background:#222;
+    color:white;
+    cursor:pointer;
+}
+
+button.active {
+    background:gold;
+    color:black;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h3 id="title">Loading...</h3>
+</header>
+
+<div class="btns">
+<button class="active" onclick="play('highlights',this)">Highlights</button>
+<button onclick="play('full',this)">Full Match</button>
+<button onclick="play('live',this)">Live</button>
+</div>
+
+<div class="video">
+<iframe id="frame" allowfullscreen></iframe>
+</div>
+
+<script>
+
+let match = new URLSearchParams(window.location.search).get("match") || "Sports Match";
+
+document.getElementById("title").innerText = "🏟️ " + match;
+
+function play(type, btn){
+
+document.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+
+let q = match + " rugby";
+
+if(type==="highlights") q += " highlights";
+if(type==="full") q += " full match";
+if(type==="live") q += " live";
+
+// IMPORTANT: embedded YouTube (NO redirect)
+document.getElementById("frame").src =
+"https://www.youtube.com/embed?listType=search&list=" + encodeURIComponent(q);
+
+}
+
+play("highlights", document.querySelector("button"));
+
+</script>
+
+</body>
+</html>
