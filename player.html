@@ -9,21 +9,29 @@
 body {
     margin:0;
     background:#000;
-    color:#fff;
+    color:white;
     font-family:Arial;
     text-align:center;
 }
 
 header {
     padding:12px;
-    background:#1a1a1a;
+    background:#111;
     border-bottom:2px solid gold;
 }
 
-iframe {
-    width:100%;
-    height:80vh;
-    border:none;
+.box {
+    padding:20px;
+}
+
+a {
+    display:block;
+    margin:10px;
+    padding:12px;
+    background:gold;
+    color:black;
+    text-decoration:none;
+    border-radius:6px;
 }
 </style>
 </head>
@@ -34,17 +42,25 @@ iframe {
 <h3 id="title">Loading...</h3>
 </header>
 
-<iframe id="frame"></iframe>
+<div class="box" id="content"></div>
 
 <script>
 let match = new URLSearchParams(window.location.search).get("match") || "sports match";
 
 document.getElementById("title").innerText = "🏟️ " + match;
 
-// FIXED: always works (no embed errors)
-document.getElementById("frame").src =
-"https://www.youtube.com/results?search_query=" + encodeURIComponent(match + " highlights");
+let searchQuery = encodeURIComponent(match + " highlights full match");
 
+// SAFE METHOD (NO BROKEN VIDEO)
+document.getElementById("content").innerHTML = `
+    <a href="https://www.youtube.com/results?search_query=${searchQuery}" target="_blank">
+        ▶ Watch on YouTube (Works 100%)
+    </a>
+
+    <a href="https://www.google.com/search?q=${searchQuery}" target="_blank">
+        🔍 Search More Streams
+    </a>
+`;
 </script>
 
 </body>
