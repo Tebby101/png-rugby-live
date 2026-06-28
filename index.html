@@ -3,43 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VIP Sports Live Hub</title>
+<title>Sports Hub</title>
 
 <style>
 body {
+    margin:0;
+    font-family:Arial;
     background:#0f0f0f;
     color:#fff;
-    font-family:Arial;
-    margin:0;
 }
 
 header {
-    background:#1a1a1a;
-    padding:15px;
     text-align:center;
+    padding:15px;
+    background:#1a1a1a;
     border-bottom:2px solid gold;
-}
-
-.sports-bar {
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:8px;
-    padding:10px;
-}
-
-.sport-btn {
-    padding:8px 12px;
-    border:1px solid gold;
-    background:#222;
-    color:#fff;
-    cursor:pointer;
-    border-radius:5px;
-}
-
-.sport-btn.active {
-    background:gold;
-    color:#000;
 }
 
 .container {
@@ -48,7 +26,29 @@ header {
     padding:10px;
 }
 
-.match-card {
+.sport-bar {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:6px;
+    padding:10px;
+}
+
+button {
+    padding:8px 10px;
+    border:none;
+    border-radius:5px;
+    background:#222;
+    color:white;
+    cursor:pointer;
+}
+
+button.active {
+    background:gold;
+    color:black;
+}
+
+.match {
     background:#1c1c1c;
     margin:10px 0;
     padding:12px;
@@ -56,14 +56,14 @@ header {
     border-radius:6px;
 }
 
-.btn {
-    background:gold;
-    color:#000;
-    padding:6px 10px;
-    text-decoration:none;
-    border-radius:5px;
+a {
     display:inline-block;
     margin-top:8px;
+    padding:6px 10px;
+    background:gold;
+    color:black;
+    text-decoration:none;
+    border-radius:5px;
 }
 </style>
 </head>
@@ -71,70 +71,58 @@ header {
 <body>
 
 <header>
-    <h2>🏟️ VIP Sports Live Hub</h2>
+    <h2>🏟️ Sports Hub Live</h2>
 </header>
 
-<div class="sports-bar">
-    <button class="sport-btn active" onclick="loadSport('Soccer', this)">Football</button>
-    <button class="sport-btn" onclick="loadSport('Basketball', this)">Basketball</button>
-    <button class="sport-btn" onclick="loadSport('Rugby%20League', this)">Rugby League</button>
-    <button class="sport-btn" onclick="loadSport('Rugby%20Union', this)">Rugby Union</button>
-    <button class="sport-btn" onclick="loadSport('American%20Football', this)">NFL</button>
-    <button class="sport-btn" onclick="loadSport('Cricket', this)">Cricket</button>
+<div class="sport-bar">
+    <button onclick="loadSport('Soccer', this)" class="active">Football</button>
+    <button onclick="loadSport('Basketball', this)">Basketball</button>
+    <button onclick="loadSport('Rugby League', this)">Rugby</button>
+    <button onclick="loadSport('Cricket', this)">Cricket</button>
 </div>
 
 <div class="container">
-    <div id="match-list">Loading matches...</div>
+    <div id="list">Loading...</div>
 </div>
 
 <script>
 
-async function loadSport(sport, btn) {
-    document.querySelectorAll('.sport-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+async function loadSport(sport, btn){
 
-    const list = document.getElementById('match-list');
-    list.innerHTML = "Loading...";
+document.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
 
-    const today = new Date().toISOString().split('T')[0];
+let today = new Date().toISOString().split("T")[0];
 
-    const url = `https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${today}&s=${sport}`;
+let url = `https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${today}&s=${sport}`;
 
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
+let res = await fetch(url);
+let data = await res.json();
 
-        if (!data.events) {
-            list.innerHTML = "No matches today.";
-            return;
-        }
+let box = document.getElementById("list");
+box.innerHTML = "";
 
-        list.innerHTML = "";
-
-        data.events.forEach(e => {
-            const div = document.createElement("div");
-            div.className = "match-card";
-
-            const match = encodeURIComponent(e.strEvent);
-
-            div.innerHTML = `
-                <h3>${e.strEvent}</h3>
-                <p>${e.strTime || "TBA"} - ${e.strLeague}</p>
-                <a class="btn" href="player.html?match=${match}">
-                    Watch Match
-                </a>
-            `;
-
-            list.appendChild(div);
-        });
-
-    } catch (err) {
-        list.innerHTML = "Error loading data.";
-    }
+if(!data.events){
+box.innerHTML = "No matches today.";
+return;
 }
 
-// default load
-loadSport('Soccer', document.querySelector('.sport-btn'));
+data.events.forEach(e=>{
+let div = document.createElement("div");
+div.className = "match";
+
+div.innerHTML = `
+<h3>${e.strEvent}</h3>
+<p>${e.strTime || "TBA"} - ${e.strLeague}</p>
+<a href="player.html?match=${encodeURIComponent(e.strEvent)}">Watch</a>
+`;
+
+box.appendChild(div);
+});
+
+}
+
+loadSport("Soccer", document.querySelector("button"));
 
 </script>
 
